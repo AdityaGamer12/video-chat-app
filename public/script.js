@@ -1,35 +1,36 @@
 const socket = io("/");
-var peer = new Peer(undefined,{
-    path:"/peerjs",
-    host:"/",
-    port:"443"
 
-})
+var peer = new Peer(undefined, {
+    path: "/peerjs",
+    host: "/",
+    port: "443",
+});
 
+const user = prompt("Enter your name");
 
-const user = prompt("Enter your name: ");
-const myVideo = document.createElement("video")
+const myVideo = document.createElement("video");
+myVideo.muted = true;
 
-myVideo.muted = true
-let myStream
-navigator.mediaDevices.getUserMedia({
-    audio:true,
-    video:true,
+let myStream;
 
-})
-.then((stream)=>{
-    myStream = stream
-    addVideoStream(myVideo, stream)
-})
- function addVideoStream(video,stream){
-    video.srcObject = stream
-    video.addEventListener("loadedmetadata",()=>{
-        video.play()
-        $("#video_grid").append(video)
-        
+navigator.mediaDevices
+    .getUserMedia({
+        audio: true,
+        video: true,
+    })
+    .then((stream) => {
+        myStream = stream;
+        addVideoStream(myVideo, stream);
     })
 
- }
+function addVideoStream(video, stream) {
+    video.srcObject = stream;
+    video.addEventListener("loadedmetadata", () => {
+        video.play();
+        $("#video_grid").append(video)
+    });
+};
+
 $(function () {
     $("#show_chat").click(function () {
         $(".left-window").css("display", "none")
@@ -58,18 +59,16 @@ $(function () {
 
 })
 
+peer.on("open", (id) => {
+    socket.emit("join-room", ROOM_ID, id, user);
+});
 
-
-socket.on("createMessage", (message,userName) => {
+socket.on("createMessage", (message, userName) => {
     $(".messages").append(`
         <div class="message">
-        <b><i class="far fa-user-circle></i> <span>${userName === user ? "Me" : userName}</span></b>
+            <b><i class="far fa-user-circle"></i> <span> ${userName === user ? "me" : userName
+        }</span> </b>
             <span>${message}</span>
         </div>
     `)
 });
-
-
-peer.on("open",(id)=>{
-  socket.emit("join_room",ROOM_ID,id,user)
-})
