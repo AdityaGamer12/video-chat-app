@@ -21,6 +21,7 @@ navigator.mediaDevices
     .then((stream) => {
         myStream = stream;
         addVideoStream(myVideo, stream);
+        socket.on("user-connected",(userId)=>{connectToNewUser(userId,stream)})
     })
 
 function addVideoStream(video, stream) {
