@@ -102,7 +102,26 @@ $(function () {
             $("#stop_video").html(html)
         }
      })
-
+$("#invite_button").click(()=>{
+    const to =prompt("Enter the Email Address: ")
+    let data = {
+        url:window.location.href,
+        to:to
+    }
+    $.ajax({
+        url:"/send-email",
+        type:"post",
+        data:JSON.stringify(data),
+        dataType:"json",
+        contentType:"application/json",
+        success:(result)=>{
+            alert("Invite Sent !")          
+        },
+        error:(result)=>{
+            console.log(result.responseJSON)          
+        },        
+    })
+})
 })
 
 peer.on("open", (id) => {
